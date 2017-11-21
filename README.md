@@ -63,62 +63,52 @@ hist_feat = True # Histogram features on or off
 hog_feat = True # HOG features on or off
 
 
-#### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+#### 3. trained a classifier.
 
 I trained a linear SVM using loss='hinge'.
 the input are combination of HOG, color space (LUV), histogram.. the code is in cell 53.
 some results are
-  Car samples:  10292
-  Notcar samples:  10136
-  Using: 8 orientations 8 pixels per cell and 2 cells per block
-  Feature vector length: 2432
-  3.1 Seconds to train SVC...
-  Test Accuracy of SVC =  0.9949
+- Car samples:  10292
+- Notcar samples:  10136
+- Using: 8 orientations 8 pixels per cell and 2 cells per block
+- Feature vector length: 2432
+- 3.1 Seconds to train SVC...
+- Test Accuracy of SVC =  0.9949
 
 ### Sliding Window Search
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
-
-![alt text][image3]
+- The code are in cell 30/50/54
+- i choose the ROI is x_start_stop=[None, None], y_start_stop=[400, 640], mostly is the low half image, for most upper half image information is ueslless, most are sky and trees.
+- i tried some size of slding windows, some results are:
+- Window_size= 90 and 160
+- the overlap is 0.85
+![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/test_classifier.png)
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
-
-![alt text][image4]
----
+- the windows is too much, so put into new ROI, two sides to detect new coming nearby vehicles, and area to detected front away vehcles
+![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/ROI.png)
+- the slding window is also can not fit the vehicle size, the ideas are: find the center of vehicle, and max points of rectangle, then make some scale of the lengh and width, and re-plot a rectangle based on center and new width & length
+![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/image_output.png)
 
 ### Video Implementation
 
-#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
+Here's a link to video: https://github.com/Genzaiwuxian/term1-p6/blob/master/output_video.mp4
 
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+- some false positives, like road, side infrustrucure. etc, most using the heat map and set threshold (3 in my code) to filer the false detection.
+- the overlap counding boxes use the idea with 'fit vehicle shapre size, it calculate the center of vehicle based on maximum rectangle of detected windows, and then calculate width and length, conver it into new sacle length/width, finally re-plot the new rectangle.
 
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
+Here's an example result showing the heatmap:
+![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/heat_map.png)
 
-### Here are six frames and their corresponding heatmaps:
-
-![alt text][image5]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
-
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
-
-
-
----
 
 ### Discussion
 
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
-
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+- some vehicle final detected windows also can not reflect the real shape, that's may influence the vehicle next movement. so the code for re-shape can be smooth in further
+- last project is advanced lane detection, and it can join together with this project show in same video.
 
