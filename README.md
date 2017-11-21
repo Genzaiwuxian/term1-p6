@@ -45,7 +45,7 @@ Here is an example of one of each of the `vehicle` and `non-vehicle` classes (sa
 
 I then explored color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
-Here is an example using the `gray` color space and HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+Here is an example using the `gray` color space (the classifier use color space "0") and HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 ![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/car_HOG.png)
 ![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/not_car_HOG.png)
@@ -54,6 +54,11 @@ Here is an example using the `gray` color space and HOG parameters of `orientati
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
 I tried various combinations of parameters, expecially the color space, i found the 'RBG' will do not work well, many non-cars image will be labeled; HLS have a good performance, however the further black car doesn't work well, often miss it. Finally, The 'LUV' can find most of cars and work well, so i chose this color space.
+HOG parameters:
+orient = 8  # HOG orientations
+pix_per_cell = 8 # HOG pixels per cell
+cell_per_block = 2 # HOG cells per block
+hog_channel = 0 # Can be 0, 1, 2, or "ALL"
 
 and there are also some parameters i choose:
 spatial_size = (16, 16) # Spatial binning dimensions
@@ -62,8 +67,11 @@ spatial_feat = True # Spatial features on or off
 hist_feat = True # Histogram features on or off
 hog_feat = True # HOG features on or off
 
-
 #### 3. trained a classifier.
+
+Before train, is normalized the train data by using :(cell 53)
+- X_scaler = StandardScaler().fit(X) # Fit a per-column scaler
+- scaled_X = X_scaler.transform(X) # Apply the scaler to X
 
 I trained a linear SVM using loss='hinge'.
 the input are combination of HOG, color space (LUV), histogram.. the code is in cell 53.
