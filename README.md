@@ -26,8 +26,9 @@ Please refer to 'P6.ipynb' for details code.
 ### Analysis of data - car and non car images
 These images have to be extracted from real world videos and images, and correctly labeled. 
 I use the images which provide by Udacity. The images have 64 x 64 pixels.
- ![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/car_image.png)
- ![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/car_image.png)
+
+![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/car_image.png)
+![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/not_car_image.png)
 
 ### Histogram of Oriented Gradients (HOG)
 
@@ -50,15 +51,29 @@ Here is an example using the `gray` color space and HOG parameters of `orientati
 ![image](https://github.com/Genzaiwuxian/term1-p6/blob/master/output_images/not_car_HOG.png)
 
 
-![alt text][image2]
-
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+I tried various combinations of parameters, expecially the color space, i found the 'RBG' will do not work well, many non-cars image will be labeled; HLS have a good performance, however the further black car doesn't work well, often miss it. Finally, The 'LUV' can find most of cars and work well, so i chose this color space.
+
+and there are also some parameters i choose:
+spatial_size = (16, 16) # Spatial binning dimensions
+hist_bins = 32    # Number of histogram bins
+spatial_feat = True # Spatial features on or off
+hist_feat = True # Histogram features on or off
+hog_feat = True # HOG features on or off
+
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+I trained a linear SVM using loss='hinge'.
+the input are combination of HOG, color space (LUV), histogram.. the code is in cell 53.
+some results are
+  Car samples:  10292
+  Notcar samples:  10136
+  Using: 8 orientations 8 pixels per cell and 2 cells per block
+  Feature vector length: 2432
+  3.1 Seconds to train SVC...
+  Test Accuracy of SVC =  0.9949
 
 ### Sliding Window Search
 
